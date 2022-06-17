@@ -41,20 +41,17 @@ namespace AddressBookADO
                 }
             }
         }
-
-        
-        public int InsertIntoTable(Contact contact)
+        public Contact InsertIntoTable(Contact contact)
         {
-            SetConnection();
-            int result = 0;
             try
             {
                 using (sqlConnection)
                 {
-                    SqlCommand sqlCommand = new SqlCommand("dbo.InsertData", this.sqlConnection);
-
-                    sqlCommand.CommandType = System.Data.CommandType.StoredProcedure;
                     sqlConnection.Open();
+                    SqlCommand sqlCommand = new SqlCommand("dbo.InsertData", sqlConnection);
+
+                    sqlCommand.CommandType = CommandType.StoredProcedure;
+                    
                     sqlCommand.Parameters.AddWithValue("@FirstName", contact.Firstname);
                     sqlCommand.Parameters.AddWithValue("@LastName", contact.Lastname);
                     sqlCommand.Parameters.AddWithValue("@Address", contact.Address);
@@ -65,25 +62,40 @@ namespace AddressBookADO
                     sqlCommand.Parameters.AddWithValue("@Email", contact.Email);
                     sqlCommand.Parameters.AddWithValue("@Type", contact.Type);
                     
-
-                    result = sqlCommand.ExecuteNonQuery();
-                    if (result != 0)
-                    {
-                        Console.WriteLine("Updated");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Not Updated");
-                    }   
+                    sqlCommand.ExecuteNonQuery();
+                    sqlConnection.Close();
                 }
             }
             catch (Exception)
             {
                 throw new CustomException(CustomException.ExceptionType.No_data_found, "No data found");
             }
-            sqlConnection.Close();
-            return result;
+            
+            return contact;
         }
 
+        public Contact UpdateByName(Contact contact)
+        {
+            using (sqlConnection)
+            {
+                SqlCommand sqlCommand = new SqlCommand("dbo.UpdateData", sqlConnection);
+                sqlCommand.CommandType = CommandType.StoredProcedure;
+                sqlCommand.Parameters.AddWithValue("@Firstname", contact.Firstname);
+                sqlCommand.Parameters.AddWithValue("@Lastname", contact.Lastname);
+                sqlCommand.Parameters.AddWithValue("PhoneNumber", contact.PhoneNumber);
+                contact = new Contact();
+                sqlConnection.Open();
+                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                if (sqlDataReader.HasRows)
+                {
+                    while (sqlDataReader.Read())
+                    {
+                        contact.Firstname = (string)sqlDataReader["Firstname"];
+                    }
+                }
+                sqlConnection.Close();
+                return contact;
+            }
+        }
     }
 }
