@@ -4,18 +4,9 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE PROCEDURE InsertData
+CREATE PROCEDURE DeleteData
 
-	@ID int,
-	@Firstname varchar(15),
-	@Lastname varchar(15),
-	@Address varchar(50),
-	@City varchar(15),
-	@State varchar(30),
-	@Zip Bigint,
-	@PhoneNumber Bigint,
-	@Email varchar(50),
-	@Type varchar(20)
+	@Firstname varchar(15)
 AS
 SET XACT_ABORT on;
 SET NOCOUNT ON;
@@ -23,11 +14,9 @@ BEGIN
 BEGIN TRY
 BEGIN TRANSACTION;
 	SET NOCOUNT ON;
-	DECLARE @new_identity INTEGER = 0;
 	DECLARE @result bit = 0;
-	INSERT INTO AddressBook_Table (Firstname, Lastname, Address, City, State, Zip, PhoneNumber, Email, Type)
-	VALUES (@Firstname, @Lastname, @Address, @City, @State, @Zip, @PhoneNumber, @Email, @Type)
-	SELECT @new_identity = @@IDENTITY;
+	DELETE FROM AddressBook_Table
+	WHERE Firstname = @Firstname
 	COMMIT TRANSACTION
 	SET @result = 1;
 	RETURN @result;

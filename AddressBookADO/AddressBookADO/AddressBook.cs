@@ -125,5 +125,38 @@ namespace AddressBookADO
             }
             return true;
         }
+
+        public string PrintDataBasedOnCity(string City, string State)
+        {
+            string nameList = "";
+            //query to be executed
+            string query = @"select * from AddressBook_Table where City =" +  City + " or State=" + State;
+            SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
+            sqlConnection.Open();
+            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+            if (sqlDataReader.HasRows)
+            {
+                while (sqlDataReader.Read())
+                {
+                    DisplayEmployeeDetails(sqlDataReader);
+                    nameList += sqlDataReader["FirstName"].ToString() + " ";
+                }
+            }
+            return nameList;
+        }
+        Contact Contact = new Contact();
+        public void DisplayEmployeeDetails(SqlDataReader sqlDataReader)
+        {
+
+            Contact.Firstname = Convert.ToString(sqlDataReader["FirstName"]);
+            Contact.Lastname = Convert.ToString(sqlDataReader["LastName"]);
+            Contact.Address = Convert.ToString(sqlDataReader["Address"] + " " + sqlDataReader["City"] + " " + sqlDataReader["State"] + " " + sqlDataReader["zip"]);
+            Contact.PhoneNumber = Convert.ToInt64(sqlDataReader["PhoneNumber"]);
+            Contact.Email = Convert.ToString(sqlDataReader["email"]);
+            Contact.Zip = Convert.ToInt64(sqlDataReader["Zip"]);
+            Contact.Type = Convert.ToString(sqlDataReader["Type"]);
+            Console.WriteLine("{0} \n {1} \n {2} \n {3} \n {4} \n {5} \n {6}", Contact.Firstname, Contact.Lastname, Contact.Address, Contact.PhoneNumber, Contact.Email, Contact.Zip, Contact.Type);
+
+        }
     }
 }
