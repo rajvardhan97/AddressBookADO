@@ -104,5 +104,26 @@ namespace AddressBookADO
                 throw new CustomException(CustomException.ExceptionType.No_data_found, "No data found");
             }
         }
+
+        public bool Delete(Contact contact)
+        {
+            SqlCommand sqlCommand = new SqlCommand("dbo.DeleteData", sqlConnection);
+            sqlCommand.CommandType = CommandType.StoredProcedure;
+            try
+            {
+                sqlConnection.Open();
+                using(sqlConnection)
+                {
+                    sqlCommand.Parameters.AddWithValue("@Firstname", contact.Firstname);
+                    sqlCommand.ExecuteNonQuery();
+                }
+                sqlConnection.Close();
+            }
+            catch(Exception)
+            {
+                throw new CustomException(CustomException.ExceptionType.No_data_found, "No data found");
+            }
+            return true;
+        }
     }
 }
