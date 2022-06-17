@@ -76,25 +76,32 @@ namespace AddressBookADO
 
         public Contact UpdateByName(Contact contact)
         {
-            using (sqlConnection)
+            try
             {
-                SqlCommand sqlCommand = new SqlCommand("dbo.UpdateData", sqlConnection);
-                sqlCommand.CommandType = CommandType.StoredProcedure;
-                sqlCommand.Parameters.AddWithValue("@Firstname", contact.Firstname);
-                sqlCommand.Parameters.AddWithValue("@Lastname", contact.Lastname);
-                sqlCommand.Parameters.AddWithValue("PhoneNumber", contact.PhoneNumber);
-                contact = new Contact();
-                sqlConnection.Open();
-                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
-                if (sqlDataReader.HasRows)
+                using (sqlConnection)
                 {
-                    while (sqlDataReader.Read())
+                    SqlCommand sqlCommand = new SqlCommand("dbo.UpdateData", sqlConnection);
+                    sqlCommand.CommandType = CommandType.StoredProcedure;
+                    sqlCommand.Parameters.AddWithValue("@Firstname", contact.Firstname);
+                    sqlCommand.Parameters.AddWithValue("@Lastname", contact.Lastname);
+                    sqlCommand.Parameters.AddWithValue("PhoneNumber", contact.PhoneNumber);
+                    contact = new Contact();
+                    sqlConnection.Open();
+                    SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                    if (sqlDataReader.HasRows)
                     {
-                        contact.Firstname = (string)sqlDataReader["Firstname"];
+                        while (sqlDataReader.Read())
+                        {
+                            contact.Firstname = (string)sqlDataReader["Firstname"];
+                        }
                     }
+                    sqlConnection.Close();
+                    return contact;
                 }
-                sqlConnection.Close();
-                return contact;
+            }
+            catch(Exception)
+            {
+                throw new CustomException(CustomException.ExceptionType.No_data_found, "No data found");
             }
         }
     }
