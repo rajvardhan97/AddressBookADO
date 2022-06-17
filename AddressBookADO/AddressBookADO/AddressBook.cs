@@ -129,7 +129,6 @@ namespace AddressBookADO
         public string PrintDataBasedOnCity(string City, string State)
         {
             string nameList = "";
-            //query to be executed
             string query = @"select * from AddressBook_Table where City =" +  City + " or State=" + State;
             SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
             sqlConnection.Open();
@@ -157,6 +156,24 @@ namespace AddressBookADO
             Contact.Type = Convert.ToString(sqlDataReader["Type"]);
             Console.WriteLine("{0} \n {1} \n {2} \n {3} \n {4} \n {5} \n {6}", Contact.Firstname, Contact.Lastname, Contact.Address, Contact.PhoneNumber, Contact.Email, Contact.Zip, Contact.Type);
 
+        }
+
+        public string PrintCountBasedOnCityandState()
+        {
+            string nameList = "";
+            string query = @"Select Count(*),State,City from AddressBook_Table Group by State,City";
+            SqlCommand sqlCommand = new SqlCommand(query, sqlConnection);
+            sqlConnection.Open();
+            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+            if (sqlDataReader.HasRows)
+            {
+                while (sqlDataReader.Read())
+                {
+                    Console.WriteLine("{0} \t {1} \t {2}", sqlDataReader[0], sqlDataReader[1], sqlDataReader[2]);
+                    nameList += sqlDataReader[0].ToString() + " ";
+                }
+            }
+            return nameList;
         }
     }
 }
