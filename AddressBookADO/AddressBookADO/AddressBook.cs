@@ -175,5 +175,23 @@ namespace AddressBookADO
             }
             return nameList;
         }
+
+        public string PrintSortDataBasedOnCity(string City)
+        {
+            string nameList = "";
+            string query = "select * from AddressBook_Table where City='Dehradun' order by Firstname";
+            SqlCommand sqlCommand = new SqlCommand(query, this.sqlConnection);
+            sqlConnection.Open();
+            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+            if (sqlDataReader.HasRows)
+            {
+                while (sqlDataReader.Read())
+                {
+                    DisplayEmployeeDetails(sqlDataReader);
+                    nameList += sqlDataReader["Firstname"].ToString() + " ";
+                }
+            }
+            return nameList;
+        }
     }
 }

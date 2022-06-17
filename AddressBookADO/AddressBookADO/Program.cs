@@ -8,6 +8,7 @@ namespace AddressBookADO
             AddressBook addressBook = new AddressBook();
             addressBook.SetConnection();
             addressBook.PrintCountBasedOnCityandState();
+            addressBook.PrintSortDataBasedOnCity("Dehradun");
         }
     }
 }
